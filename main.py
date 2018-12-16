@@ -9,9 +9,9 @@ from ardumashtun import UnoMashtun
 import sys
 import glob
 import serial
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QPixmap
+from PyQt5 import QtGui, uic
+from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QPixmap
 import datetime
 
 form_class = uic.loadUiType("qt_brewery.ui")[0]                 # Load the UI
@@ -46,17 +46,17 @@ def serial_ports():
         except serial.SerialException:
             pass
     return result
-    
+
 def logic_reader(value):
     if value == False:
         a = 'Off'
     else:
         a = 'On'
     return a
- 
+
 class MyWindowClass(QtGui.QMainWindow, form_class):
     connected = bool(False)
-    mashtun = None 
+    mashtun = None
     time = 0
     #setpoint = textSetTemp.text()
     #p_value = 1
@@ -79,7 +79,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.temperature_samples = []
         self.temperature_set = []
         self.timedata = []
-        
+
 #    def getdata(self):
 #        frequency = 0.5
 #        noise = random.normalvariate(0., 1.)
@@ -90,9 +90,9 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
 #        self.databuffer.append( self.getdata() )
 #        self.y[:] = self.databuffer
 #        self.curve.setData(self.x, self.y)
-#        self.app.processEvents()     
-#        
-        
+#        self.app.processEvents()
+#
+
     def update(self):
         self.plt = self.plotWidget
         self.time = self.time + 1
@@ -117,35 +117,35 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.label_dutycycle.setText(str(self.dutycycle))
         self.plt.plot(self.temperature_samples,clear=True)
         self.plt.plot(self.temperature_set,pen='r')
-        
-       
-        
+
+
+
 
         #self.iteration += 1
-    
+
     def update_setpoint(self):
         setattr(self.mashtun, 'setpoint',float(self.textSetTemp.text()))
-        
+
     def update_P(self):
         setattr(self.mashtun, 'p_value',float(self.textSetP.text()))
-        
+
     def update_I(self):
         setattr(self.mashtun, 'i_value',float(self.textSetI.text()))
-        
+
     def on_text_changed(self, string):
-            QtGui.QMessageBox.information(self,"Hello!","Current String is:\n"+string)  
-    
+            QtGui.QMessageBox.information(self,"Hello!","Current String is:\n"+string)
+
     def update_parameter(self, parameter, value):
         setattr(self.mashtun, parameter, value)
-        
-    def ButtonPID_clicked(self):        #Event handlers for buttons          
-         print 'clicked PID'       
-         self.mashtun.pid = not self.mashtun.pid
-        
-    
 
-    def ButtonHeater_clicked(self):                  
-         print 'clicked Heater'
+    def ButtonPID_clicked(self):        #Event handlers for buttons
+         print('clicked PID')
+         self.mashtun.pid = not self.mashtun.pid
+
+
+
+    def ButtonHeater_clicked(self):
+         print('clicked Heater')
          # Turn off pid control
          if self.mashtun.pid:
             self.mashtun.pid = False
@@ -154,14 +154,14 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         # otherwise turn it on by setting it to 100
          dutycycle = 0 if self.heater_status else 100
          self.update_parameter('dutycycle', dutycycle)
-         
+
     def ButtonPump_clicked(self):
-         self.mashtun.pump = not self.mashtun.pump                  
-         print 'clicked Pump' 
-    
+         self.mashtun.pump = not self.mashtun.pump
+         print('clicked Pump')
+
     def textInput(self,setTemp,setP,setI):
-        print float(self.textSetTemp.text())
-    
+        print(float(self.textSetTemp.text()))
+
     def ButtonConnect_clicked(self,connection):
         if not self.connected:
             self.mashtun = UnoMashtun(str(self.comboSerialBox.currentText()))
@@ -170,12 +170,12 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             self.timer.timeout.connect(self.update)
             self.timer.start(1000)
             self.control_label.setText('connected to ' + str(self.comboSerialBox.currentText()))
-            
 
 
 
 
-#print serial_ports() 
+
+#print serial_ports()
 app = QtGui.QApplication(sys.argv)
 #plot = pg.PlotWidget()
 myWindow = MyWindowClass(None)
